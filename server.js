@@ -12,42 +12,44 @@ app.use(express.json());
 // This is a request for a static file
 app.use(express.static(path.join(__dirname, "./public")))
 
+let notes = [];
+
 // Routes
-app.get("/", function(req, res) {
-    res.sendFile(path.join(__dirname, "./public/index.html"))
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname, "./public/index.html"))
 });
 
-app.get("/notes", function(req, res) {
-    res.sendFile(path.join(__dirname, "./public/notes.html"))
+app.get("/notes", function (req, res) {
+  res.sendFile(path.join(__dirname, "./public/notes.html"))
 });
 
-// Displays a single character, or returns false
-app.get("/api/notes/:character", function(req, res) {
-    var chosen = req.params.character;
-  
-    return res.json(false);
-  });
+// Displays all characters
+app.get("/api/notes", function (req, res) {
+  return res.json(notes);
+});
 
-app.post("/api/notes", function(req, res) {
-    // req.body hosts is equal to the JSON post sent from the user
-    // This works because of our body parsing middleware
-    let newCharacter = req.body;
-  
-    // Using a RegEx Pattern to remove spaces from newCharacter
-    // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-    newCharacter.routeName = newCharacter.name.replace(/\s+/g, "").toLowerCase();
-  
-    console.log(newCharacter);
-  
-    characters.push(newCharacter);
-  
-    res.json(newCharacter);
-  });
+app.post("/api/notes", function (req, res) {
+  // req.body hosts is equal to the JSON post sent from the user
+  // This works because of our body parsing middleware
+  let newNote = req.body;
+
+  // Using a RegEx Pattern to remove spaces from newCharacter
+  // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
+  newNote.id = "1"
+  newNote.title = "test"
+  // newNote.name.replace(/\s+/g, "").toLowerCase();
+
+  console.log(newNote);
+
+  notes.push(newNote);
+
+  res.json(newNote);
+});
 
 // POST a note - takes in JSON input
 
 
 // Starts the server to begin listening
-app.listen(PORT, function() {
-    console.log("App listening on PORT " + PORT);
+app.listen(PORT, function () {
+  console.log("App listening on PORT " + PORT);
 });
