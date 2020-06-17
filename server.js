@@ -13,52 +13,46 @@ app.use(express.json());
 // This is a request for the static folder public
 app.use(express.static(path.join(__dirname, "./public")))
 
-let notes = [];
+let note = [];
 
 // Routes
+// This GET request from client "/"" and serves up index.html
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "./public/index.html"))
 });
 
+// This GET request from client "/notes" and serves up notes.html
 app.get("/notes", function (req, res) {
   res.sendFile(path.join(__dirname, "./public/notes.html"))
 });
 
-// Displays all characters
+// This GET request from client "api/notes" and serves a result json from notes array
 app.get("/api/notes", function (req, res) {
-  fs.readFile(__dirname + "/db/db.json", function (err, data) {
+  fs.readFile(__dirname + "/db/db.json", "utf8", function (err, data) {
     if (err) throw err;
-    const content = data.toString()
-    let newN
-    // res.end(data);
+    let newNote = JSON.parse(data);
+    note.push(newNote)
   });
-  // return res.json(notes);
+  return res.json(note);
 });
 
+// This POST 
 app.post("/api/notes", function (req, res) {
-  fs.readFile(__dirname + "/db/db.json", function (err, data) {
-    if (err) throw err;
-    const content = data.toString()
-    let newNote = req.body;
-    newNote.title = content.title;
-    newNote.title = content.text;
+
+  //   let note = req.body
+  //  console.log(addNotes)
+    
+    // newNote.title = content.title;
+    // newNote.text = content.text;
+    // console.log(content)
+    // notes.push(newNote);
+    res.json(note);
     // res.end(data);
-  });
-  // req.body hosts is equal to the JSON post sent from the user
-  // This works because of our body parsing middleware
-  let newNote = req.body;
-
-  // Using a RegEx Pattern to remove spaces from newCharacter
-  // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-  newNote.title = "test" 
-  newNote.text =  "text"
-  // newNote.name.replace(/\s+/g, "").toLowerCase();
-
-
-  res.json(newNote);
 });
 
-// POST a note - takes in JSON input
+
+
+
 
 
 // Starts the server to begin listening
