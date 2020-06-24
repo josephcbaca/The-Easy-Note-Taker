@@ -6,8 +6,9 @@ const $noteList = $(".list-container .list-group");
 
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
+let count = 1;
 
-// A function for getting all notes from the db
+// A function for getting JSON from /api/notes
 const getNotes = () => {
   return $.ajax({
     url: "/api/notes",
@@ -15,9 +16,9 @@ const getNotes = () => {
   });
 };
 
-// A function for saving a note to the db
-const saveNote = (note) => {
-  return $.ajax({
+// A function for saving a note to /api/notes
+const saveNote = (note) => {   console.log(note)
+  return $.ajax({ 
     url: "/api/notes",
     data: note,
     method: "POST",
@@ -49,12 +50,14 @@ const renderActiveNote = () => {
   }
 };
 
-// Get the note data from the inputs, save it to the db and update the view
+// Get the note data from the inputs, save it to the db, update the view and add 1 to count for id
 const handleNoteSave = function () {
   const newNote = {
+    id: count,
     title: $noteTitle.val(),
-    text: $noteText.val(),
+    text: $noteText.val()
   };
+    count++
 
   saveNote(newNote).then(() => {
     getAndRenderNotes();
@@ -85,7 +88,7 @@ const handleNoteView = function () {
   renderActiveNote();
 };
 
-// Sets the activeNote to and empty object and allows the user to enter a new note
+// Sets the activeNote to an empty object and allows the user to enter a new note
 const handleNewNoteView = function () {
   activeNote = {};
   renderActiveNote();
@@ -125,6 +128,12 @@ const renderNoteList = (notes) => {
 
   if (notes.length === 0) {
     noteListItems.push(create$li("No saved Notes", false));
+  } else {
+    for(let i = 0; i < notes.length; i++) {
+      let nums = [];
+      nums.push(notes[i].id);
+      count = Math.max.apply(null, nums);
+    }
   }
 
   notes.forEach((note) => {
