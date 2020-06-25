@@ -29,21 +29,6 @@ app.get("/api/notes", function (req, res) {
   res.sendFile(path.join(__dirname, "./db/db.json"))
 });
 
-// app.post("/api/notes", function (req, res) {
-//   const notes = req.body;
-//   console.log(notes)
-//   fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
-//     if (err) throw err;
-//     data = JSON.parse(data);
-
-//     fs.writeFile(path.join(__dirname, "./db/db.json"), JSON.stringify(data), (err) => {
-//       if (err) throw err;
-//       notes.push(data);
-//       return res.json(notes);
-//     });
-//   });
-// });
-
 //This worked above doesnt, why?
 app.post("/api/notes", function (req, res) {
   const notes = req.body;
