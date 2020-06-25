@@ -9,14 +9,12 @@ let PORT = 8080;
 
 //Set up the Express app to handle data parsing
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 // This is a request for the static folder public
 app.use(express.static(path.join(__dirname, "./public")))
 
-let note = [];
-
 // Routes
-// This GET request from client "/"" and serves up index.html
+// This GET request from client "/" and serves up index.html
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "./public/index.html"))
 });
@@ -26,34 +24,59 @@ app.get("/notes", function (req, res) {
   res.sendFile(path.join(__dirname, "./public/notes.html"))
 });
 
-// This GET request from client "api/notes" and serves a result json from notes array
+// This GET request from client "api/notes" and serves a result json from notes array read from db.json
 app.get("/api/notes", function (req, res) {
-  fs.readFile(__dirname + "/db/db.json", "utf8", function (err, data) {
-    if (err) throw err;
-    let newNote = JSON.parse(data);
-    note.push(newNote)
-  });
-  return res.json(note);
+  res.sendFile(path.join(__dirname, "./db/db.json"))
 });
 
-// This POST 
+// app.post("/api/notes", function (req, res) {
+//   const notes = req.body;
+//   console.log(notes)
+//   fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
+//     if (err) throw err;
+//     data = JSON.parse(data);
+
+//     fs.writeFile(path.join(__dirname, "./db/db.json"), JSON.stringify(data), (err) => {
+//       if (err) throw err;
+//       notes.push(data);
+//       return res.json(notes);
+//     });
+//   });
+// });
+
+//This worked above doesnt, why?
 app.post("/api/notes", function (req, res) {
+  const notes = req.body;
+  fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
+      if (err) throw err;
+      data = JSON.parse(data);
+      data.push(notes);
 
-  //   let note = req.body
-  //  console.log(addNotes)
-    
-    // newNote.title = content.title;
-    // newNote.text = content.text;
-    // console.log(content)
-    // notes.push(newNote);
-    res.json(note);
-    // res.end(data);
+      fs.writeFile(path.join(__dirname, "./db/db.json"), JSON.stringify(data), (err) => {
+          if (err) throw err;
+          return res.json(notes);
+      });
+  });
 });
 
+// Delete
+app.delete("/api/notes/:id", function (req, res) {
 
+  let clear = req.params.id;
 
+  fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
+    if (err) throw err;
 
+    let newData = JSON.parse(data);
 
+    let newNotes = newData.filter(note => note.id != clear);
+
+    fs.writeFile(path.join(__dirname, "./db/db.json"), JSON.stringify(newNotes), (err) => {
+      if (err) throw err;
+      res.send(newNotes);
+    });
+  })
+})
 
 // Starts the server to begin listening
 app.listen(PORT, function () {
