@@ -5,7 +5,7 @@ let fs = require("fs");
 
 // Sets up the Express App
 let app = express();
-let PORT = 8080;
+let PORT = process.env.PORT || 8080;;
 
 //Set up the Express app to handle data parsing
 app.use(express.json());
